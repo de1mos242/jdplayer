@@ -1,11 +1,11 @@
 from flask import request
 from flask_restplus import Resource
 
+from app.main.controller.namespaces import auth_ns as api
 from app.main.service.user_service import get_all_users, save_new_user, get_a_user
 from app.main.util.decorator import admin_token_required
 from app.main.util.dto import UserDto
 
-api = UserDto.api
 user_dto = UserDto.user
 
 
@@ -29,7 +29,7 @@ class UserList(Resource):
 
 # noinspection PyUnresolvedReferences
 @api.route('/<public_id>')
-@api.param('public_id', 'The User identifier')
+@api.param('public_id', 'The User ide ntifier')
 @api.response(404, 'User not found.')
 class User(Resource):
     @api.doc('get a user', security=None)

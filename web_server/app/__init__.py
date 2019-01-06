@@ -1,8 +1,7 @@
 from flask import Blueprint
 from flask_restplus import Api
 
-from app.main.controller.user_controller import api as user_ns
-from app.main.controller.auth_controller import api as auth_ns
+from app.main.controller.namespaces import user_ns, auth_ns
 
 blueprint = Blueprint('api', __name__)
 

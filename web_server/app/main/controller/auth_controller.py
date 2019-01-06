@@ -1,11 +1,11 @@
 from flask import request
 from flask_restplus import Resource
 
+from app.main.controller.namespaces import user_ns as api
 from app.main.service.auth_helper import Auth
 from app.main.util.decorator import token_required
 from app.main.util.dto import AuthDto
 
-api = AuthDto.api
 user_auth = AuthDto.user_auth
 
 

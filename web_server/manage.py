@@ -7,7 +7,7 @@ from flask_script import Manager
 from app import blueprint
 from app.main import create_app, db
 # noinspection PyUnresolvedReferences
-from app.main.model import user, blacklist
+from app.main.controller import auth_controller, user_controller
 
 app = create_app(os.getenv('APP_ENV') or 'dev')
 app.register_blueprint(blueprint)

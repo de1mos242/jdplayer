@@ -15,3 +15,4 @@ build/
 
 *.iml
 .idea
+.db

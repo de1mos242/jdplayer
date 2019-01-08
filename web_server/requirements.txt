@@ -1,3 +1,6 @@
+vk_api
+aiohttp
+sqlalchemy
 flask
 celery
 flask-restplus

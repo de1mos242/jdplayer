@@ -1,4 +1,4 @@
-from flask_restplus import Namespace, fields
+from flask_restplus import fields
 
 from app.main.controller.namespaces import user_ns, auth_ns
 

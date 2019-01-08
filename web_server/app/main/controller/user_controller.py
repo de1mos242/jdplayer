@@ -1,7 +1,7 @@
 from flask import request
 from flask_restplus import Resource
 
-from app.main.controller.namespaces import auth_ns as api
+from app.main.controller.namespaces import user_ns as api
 from app.main.service.user_service import get_all_users, save_new_user, get_a_user
 from app.main.util.decorator import admin_token_required
 from app.main.util.dto import UserDto

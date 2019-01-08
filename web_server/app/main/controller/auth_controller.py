@@ -1,7 +1,7 @@
 from flask import request
 from flask_restplus import Resource
 
-from app.main.controller.namespaces import user_ns as api
+from app.main.controller.namespaces import auth_ns as api
 from app.main.service.auth_helper import Auth
 from app.main.util.decorator import token_required
 from app.main.util.dto import AuthDto
@@ -35,3 +35,13 @@ class LogoutAPI(Resource):
         # get auth token
         auth_header = request.headers.get('Authorization')
         return Auth.logout_user(data=auth_header)
+
+@api.route('facebook')
+class LoginFacebook(Resource):
+    """
+    Login though facebook
+    """
+    @api.doc('facebook login')
+    def post(self):
+        print(request)
+        return {"status": request, 'access_token': 'fdsafsad'}, 200

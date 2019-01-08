@@ -3,7 +3,7 @@ from flask_restplus import Api
 
 from app.main.controller.namespaces import user_ns, auth_ns
 
-blueprint = Blueprint('api', __name__)
+blueprint = Blueprint('api', __name__, url_prefix='/api')
 
 authorizations = {
     'Bearer Auth': {
@@ -22,4 +22,4 @@ api = Api(blueprint,
           )
 
 api.add_namespace(user_ns, path='/user')
-api.add_namespace(auth_ns)
+api.add_namespace(auth_ns, path='/auth')

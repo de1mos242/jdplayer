@@ -13,7 +13,7 @@ class TestTrackModel(BaseTestCase):
         db.session.commit()
         db.session.flush()
 
-        self.assertIsNotNone(track.unique_id, 'hash not calculated')
+        self.assertIsNotNone(track.external_id, 'hash not calculated')
 
 
 if __name__ == '__main__':

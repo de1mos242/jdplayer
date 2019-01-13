@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  minio:
+    image: minio/minio
+    volumes:
+      - ./minio/data:/export
+    ports:
+      - "9001:9000"
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    command: server /export
+
+  rabbit:
+    image: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=mypass
+    ports:
+      - "5673:5672"
+
+#  celery-worker:
+#    build:
+#      context: celery
+#      dockerfile: dockerfile
+#    volumes:
+#      - ../web_server:/app
+#    links:
+#      - rabbit
+#    depends_on:
+#      - rabbit
+

@@ -15,4 +15,8 @@ build/
 
 *.iml
 .idea
-.db
+*.db
+
+dockers/minio/data
+
+vk_config.v2.json

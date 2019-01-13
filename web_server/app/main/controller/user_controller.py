@@ -29,7 +29,7 @@ class UserList(Resource):
 
 # noinspection PyUnresolvedReferences
 @api.route('/<public_id>')
-@api.param('public_id', 'The User ide ntifier')
+@api.param('public_id', 'The User identifier')
 @api.response(404, 'User not found.')
 class User(Resource):
     @api.doc('get a user', security=None)

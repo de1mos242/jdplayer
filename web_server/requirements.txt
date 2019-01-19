@@ -10,3 +10,5 @@ Flask-Migrate
 pyjwt
 Flask-Script
 flask_testing
+pycairo
+pygobject

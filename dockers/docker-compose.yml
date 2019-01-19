@@ -20,6 +20,17 @@ services:
     ports:
       - "5673:5672"
 
+  icecast:
+    build: ./icecast
+    environment:
+      - ICECAST_SOURCE_PASSWORD=icejdplayer
+      - ICECAST_ADMIN_PASSWORD=icejdplayer
+      - ICECAST_RELAY_PASSWORD=icejdplayer
+      - ICECAST_MAX_CLIENTS=1000
+      - ICECAST_MAX_SOURCES=1000
+    ports:
+      - 8000:8000
+
 #  celery-worker:
 #    build:
 #      context: celery

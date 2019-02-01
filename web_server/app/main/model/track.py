@@ -1,7 +1,7 @@
 import datetime
 import enum
 
-from sqlalchemy import UniqueConstraint, func
+from sqlalchemy import func
 
 from app.main import db
 
@@ -34,4 +34,4 @@ class Track(db.Model):
     updated_at = db.Column(db.DateTime, nullable=False, server_default=func.now(), onupdate=func.now())
 
     def __repr__(self):
-        return f'<track: {self.artist}: {self.title} ({str(datetime.timedelta(seconds=self.duration))})'
+        return f'<track: {self.artist}: {self.title} ({str(datetime.timedelta(seconds=self.duration))})>'

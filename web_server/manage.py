@@ -1,4 +1,3 @@
-import os
 import unittest
 
 from flask_migrate import Migrate, MigrateCommand
@@ -8,8 +7,6 @@ from app import blueprint
 from app.main import db, app
 # noinspection PyUnresolvedReferences
 from app.main.controller import auth_controller, user_controller, track_controller
-# noinspection PyUnresolvedReferences
-from app.main.model import user, blacklist, track
 
 app.register_blueprint(blueprint)
 

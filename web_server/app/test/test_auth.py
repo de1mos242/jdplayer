@@ -6,7 +6,7 @@ from app.test.base import BaseTestCase
 
 def register_user(self):
     return self.client.post(
-        '/user/',
+        '/api/user/',
         data=json.dumps(dict(
             email='example@gmail.com',
             username='username',
@@ -18,7 +18,7 @@ def register_user(self):
 
 def login_user(self):
     return self.client.post(
-        '/auth/login',
+        '/api/auth/login',
         data=json.dumps(dict(
             email='example@gmail.com',
             password='123456'
@@ -61,7 +61,7 @@ class TestAuthBlueprint(BaseTestCase):
 
             # valid token logout
             response = self.client.post(
-                '/auth/logout',
+                '/api/auth/logout',
                 headers=dict(
                     Authorization='Bearer ' + json.loads(
                         login_response.data.decode()

@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.contrib.fixers import ProxyFix
 
@@ -19,6 +20,9 @@ app.config.from_object(Config)
 db = SQLAlchemy()
 db.init_app(app)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 flask_bcrypt.init_app(app)
 celery = make_celery(app)
 
@@ -29,4 +33,8 @@ file_service.init_app(url=app.config['S3_URL'],
                       region=app.config['S3_REGION'],
                       bucket_name=app.config['S3_BUCKET_NAME'])
 
-from app.main.service import background_task_service
+from app.main.service import background_task_service, user_service
+
+with app.app_context():
+    db.init_app(app)
+    user_service.create_admin()

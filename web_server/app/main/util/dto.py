@@ -6,16 +6,14 @@ from app.main.model.track import TrackState, Track
 
 class UserDto:
     user = user_ns.model('user', {
-        'email': fields.String(required=True, description='user email address'),
         'username': fields.String(required=True, description='user username'),
-        'password': fields.String(required=True, description='user password'),
-        'public_id': fields.String(description='user Identifier')
+        'source': fields.String(description='user source')
     })
 
 
 class AuthDto:
     user_auth = auth_ns.model('auth_details', {
-        'email': fields.String(required=True, description='The email address'),
+        'username': fields.String(required=True, description='User login'),
         'password': fields.String(required=True, description='The user password '),
     })
 

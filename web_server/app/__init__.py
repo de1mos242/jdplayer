@@ -7,10 +7,10 @@ from app.main.model import track, blacklist, user, room, playlist
 blueprint = Blueprint('api', __name__, url_prefix='/api')
 
 authorizations = {
-    'Bearer Auth': {
+    'Cookies Auth': {
         'type': 'apiKey',
         'in': 'header',
-        'name': 'Authorization'
+        'name': 'Cookies'
     },
 }
 
@@ -18,7 +18,7 @@ api = Api(blueprint,
           title='JD Player API',
           version='1.0',
           description='collective streaming audio player',
-          security='Bearer Auth',
+          security='Cookies Auth',
           authorizations=authorizations
           )
 

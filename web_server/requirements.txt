@@ -12,3 +12,4 @@ Flask-Script
 flask_testing
 pycairo
 pygobject
+flask-login

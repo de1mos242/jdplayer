@@ -1,4 +1,7 @@
-from app.main.model.user import User
+import flask_login
+
+from app.main import login_manager
+from app.main.model.user import User, SecurityUser
 from app.main.service.blacklist_service import save_token
 
 
@@ -7,23 +10,15 @@ class Auth:
     @staticmethod
     def login_user(data):
         try:
-            # fetch the user data
-            user = User.query.filter_by(email=data.get('email')).first()
-            if user and user.check_password(data.get('password')):
-                auth_token = user.encode_auth_token(user.id)
-                if auth_token:
-                    response_object = {
-                        'status': 'success',
-                        'message': 'Successfully logged in.',
-                        'Authorization': auth_token.decode()
-                    }
-                    return response_object, 200
+            # fetch the security_user data
+            security_user = SecurityUser.query.filter_by(username=data.get('username')).first()
+            if security_user and security_user.check_password(data.get('password')):
+                if flask_login.login_user(security_user.user):
+                    return {'message': 'success login'}, 200
+                else:
+                    return {'message': 'user inactive'}, 401
             else:
-                response_object = {
-                    'status': 'fail',
-                    'message': 'email or password does not match.'
-                }
-                return response_object, 401
+                return {'message': 'invalid username or password'}, 401
 
         except Exception as e:
             print(e)

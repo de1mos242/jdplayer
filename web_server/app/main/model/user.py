@@ -1,23 +1,41 @@
-import datetime
-
-import jwt
+import enum
+from flask_login import UserMixin
+from sqlalchemy.orm import relationship
 
 from app.main import db, flask_bcrypt
-from app.main.config import key
-from app.main.model.blacklist import BlacklistToken
 
 
-class User(db.Model):
+class UserSource(enum.Enum):
+    security = 'security'
+    google = 'google'
+
+
+class User(UserMixin, db.Model):
     """ User Model for storing user related details """
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    email = db.Column(db.String(255), unique=True, nullable=False)
-    registered_on = db.Column(db.DateTime, nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
-    public_id = db.Column(db.String(100), unique=True)
+    username = db.Column(db.String(50), unique=True)
+    source = db.Column(db.Enum(UserSource), nullable=False, server_default=UserSource.security.value)
+
+    def __repr__(self):
+        return f"<User {self.username}>"
+
+    @classmethod
+    def load_by_id(cls, id):
+        return User.query.get(int(id))
+
+
+class SecurityUser(db.Model):
+    """ storing login/password pairs to provide direct login mechanism"""
+    __tablename__ = "security_users"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(50), unique=True)
     password_hash = db.Column(db.String(100))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    user = relationship(User.__name__)
 
     @property
     def password(self):
@@ -31,43 +49,17 @@ class User(db.Model):
         return flask_bcrypt.check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return f"<User {self.username}>"
+        return f"<Security User {self.username}>"
 
-    @staticmethod
-    def encode_auth_token(user_id):
-        """
-        Generates the Auth Token
-        :return: string
-        """
-        try:
-            payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1, seconds=5),
-                'iat': datetime.datetime.utcnow(),
-                'sub': user_id
-            }
-            return jwt.encode(
-                payload,
-                key,
-                algorithm='HS256'
-            )
-        except Exception as e:
-            return e
 
-    @staticmethod
-    def decode_auth_token(auth_token):
-        """
-        Decodes the auth token
-        :param auth_token:
-        :return: True, integer| False, string
-        """
-        try:
-            payload = jwt.decode(auth_token, key)
-            is_blacklisted_token = BlacklistToken.check_blacklist(auth_token)
-            if is_blacklisted_token:
-                return False, 'Token blacklisted. Please log in again.'
-            else:
-                return True, payload['sub']
-        except jwt.ExpiredSignatureError:
-            return False, 'Signature expired. Please log in again.'
-        except jwt.InvalidTokenError:
-            return False, 'Invalid token. Please log in again.'
+class GoogleUser(db.Model):
+    """ storing credentials for goolge user """
+    __tablename__ = "google_users"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    social_id = db.Column(db.Text, nullable=False, unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    user = relationship(User.__name__)
+
+    def __repr__(self):
+        return f"<Google user {self.username}>"

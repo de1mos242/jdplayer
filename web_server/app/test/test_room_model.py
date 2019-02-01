@@ -1,16 +1,15 @@
 import unittest
-from datetime import datetime
 
 from app.main import db
 from app.main.model.room import Room, RoomMember, RoomMemberLevel
-from app.main.model.user import User
+from app.main.model.user import User, UserSource
 from app.test.base import BaseTestCase
 
 
 class TestRoomModel(BaseTestCase):
     def test_create_and_find_room_with_member(self):
         room = Room(name='test_room_name')
-        user = User(username="test username", email='mail@mail.ru', registered_on=datetime.now())
+        user = User(username="test username", source=UserSource.security)
         member = RoomMember(user=user, room=room, level=RoomMemberLevel.admin)
 
         db.session.add(room)

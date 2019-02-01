@@ -1,9 +1,12 @@
-from flask import request
+import logging
+
+import flask_login
+from flask import g
+from flask_login import login_required
 from flask_restplus import Resource
 
 from app.main.controller.namespaces import user_ns as api
-from app.main.service.user_service import get_all_users, save_new_user, get_a_user
-from app.main.util.decorator import admin_token_required
+from app.main.service.user_service import get_all_users
 from app.main.util.dto import UserDto
 
 user_dto = UserDto.user
@@ -12,19 +15,11 @@ user_dto = UserDto.user
 @api.route('/')
 class UserList(Resource):
     @api.doc('list_of_registered_users')
-    @admin_token_required
+    @flask_login.login_required
     @api.marshal_list_with(user_dto, envelope='data')
     def get(self):
         """List all registered users"""
         return get_all_users()
-
-    @api.response(201, 'User successfully created.')
-    @api.doc('create a new user', security=None)
-    @api.expect(user_dto, validate=True)
-    def post(self):
-        """Creates a new User """
-        data = request.json
-        return save_new_user(data=data)
 
 
 # noinspection PyUnresolvedReferences

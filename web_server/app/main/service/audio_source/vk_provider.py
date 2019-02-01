@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 import vk_api
@@ -14,9 +15,14 @@ class VkProvider:
             self.init_app(login, password)
 
     def init_app(self, login, password):
-        self.vk_audio = self.__make_api(login, password)
+        if login != 'vk_login_not_set':
+            self.vk_audio = self.__make_api(login, password)
+        else:
+            logging.warning('VK login password not set! Set corresponding environment variables')
 
     def search_audio(self, query: str) -> List[AudioSearchResult]:
+        if self.vk_audio is None:
+            return []
         songs = self.vk_audio.search(query)
         return list(map(
             lambda song: AudioSearchResult(title=song['title'],

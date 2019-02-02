@@ -6,7 +6,7 @@ from flask_script import Manager
 from app import blueprint
 from app.main import db, app
 # noinspection PyUnresolvedReferences
-from app.main.controller import auth_controller, user_controller, track_controller
+from app.main.controller import auth_controller, user_controller, track_controller, room_controller
 
 app.register_blueprint(blueprint)
 

@@ -35,6 +35,3 @@ file_service.init_app(url=app.config['S3_URL'],
 
 from app.main.service import background_task_service, user_service
 
-with app.app_context():
-    db.init_app(app)
-    user_service.create_admin()

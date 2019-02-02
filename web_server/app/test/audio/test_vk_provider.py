@@ -1,5 +1,3 @@
-import asyncio
-
 from app.main.service.audio_source.vk_provider import VkProvider
 from app.test.base import BaseTestCase
 

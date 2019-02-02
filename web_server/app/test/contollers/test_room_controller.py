@@ -1,8 +1,6 @@
 import json
 import unittest
 
-from app.main import db
-from app.main.model.user import User, SecurityUser, UserSource
 from app.test.base import BaseTestCase
 
 
@@ -17,9 +15,17 @@ def login_user(self, username, password):
     )
 
 
-class TestAuthBlueprint(BaseTestCase):
+def create_room(self, room_name):
+    return self.client.post(
+        '/api/room/',
+        data=json.dumps({'name': room_name}),
+        content_type='application/json'
+    )
 
-    def test_registered_user_login(self):
+
+class TestRoomController(BaseTestCase):
+
+    def test_create_room(self):
         """ Test for login of registered-user login """
         with self.client:
             # user registration
@@ -29,31 +35,10 @@ class TestAuthBlueprint(BaseTestCase):
             login_response = login_user(self, 't1000', '1000')
             self.assertEqual(login_response.status_code, 200)
 
-    # def test_valid_logout(self):
-    #     """ Test for logout before token expires """
-    #     with self.client:
-    #         self.create_user('t1000', '1000')
-    #         login_response = login_user(self, 't1000', '1000')
-    #         self.assertEqual(login_response.status_code, 200)
-    #
-    #         # valid token logout
-    #         response = self.client.post(
-    #             '/api/auth/logout',
-    #             headers=dict(
-    #
-    #             )
-    #         )
-    #         data = json.loads(response.data.decode())
-    #         self.assertTrue(data['status'] == 'success')
-    #         self.assertEqual(response.status_code, 200)
-
-    def create_user(self, username, password):
-        user = User(username=username, source=UserSource.security)
-        security_user = SecurityUser(username=username, user=user)
-        security_user.password = password
-        db.session.add(security_user)
-        db.session.commit()
-        db.session.flush()
+            create_room_response = create_room(self, 'test_room')
+            self.assertEqual(create_room_response.status_code, 200)
+            data = json.loads(create_room_response.data.decode())
+            self.assertTrue(data['data']['name'] == 'test_room')
 
 
 if __name__ == '__main__':

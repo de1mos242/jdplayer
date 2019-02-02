@@ -1,6 +1,3 @@
-import datetime
-import uuid
-
 from app.main import db, login_manager
 from app.main.model.user import User, SecurityUser
 
@@ -26,6 +23,7 @@ def get_all_users():
 @login_manager.user_loader
 def get_user_by_id(id):
     return User.load_by_id(id)
+
 
 def save_changes(data):
     db.session.add(data)

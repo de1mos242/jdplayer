@@ -2,6 +2,7 @@ from flask_testing import TestCase
 
 from app.main import db, app
 from app.main.config import Config
+from app.main.model.user import User, UserSource, SecurityUser
 
 
 class BaseTestCase(TestCase):
@@ -18,3 +19,11 @@ class BaseTestCase(TestCase):
     def tearDown(self):
         db.session.remove()
         db.drop_all()
+
+    def create_user(self, username, password):
+        user = User(username=username, source=UserSource.security)
+        security_user = SecurityUser(username=username, user=user)
+        security_user.password = password
+        db.session.add(security_user)
+        db.session.commit()
+        db.session.flush()

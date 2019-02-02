@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask_restplus import Api
 
 from app.main.controller.namespaces import user_ns, auth_ns, track_ns, room_ns
-from app.main.model import track, blacklist, user, room, playlist
+from app.main.model import track, user, room, playlist
 
 blueprint = Blueprint('api', __name__, url_prefix='/api')
 

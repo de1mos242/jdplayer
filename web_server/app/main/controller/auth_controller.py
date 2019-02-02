@@ -1,3 +1,4 @@
+import flask_login
 from flask import request
 from flask_restplus import Resource
 from vk_api import vk_api
@@ -5,7 +6,6 @@ from vk_api.audio import VkAudio
 
 from app.main.controller.namespaces import auth_ns as api
 from app.main.service.auth_helper import Auth
-from app.main.util.decorator import token_required
 from app.main.util.dto import AuthDto
 
 user_auth = AuthDto.user_auth
@@ -31,12 +31,10 @@ class LogoutAPI(Resource):
     Logout Resource
     """
 
-    @token_required
     @api.doc('logout a user')
+    @flask_login.login_required
     def post(self):
-        # get auth token
-        auth_header = request.headers.get('Authorization')
-        return Auth.logout_user(data=auth_header)
+        return Auth.logout_user()
 
 
 @api.route('/facebook')

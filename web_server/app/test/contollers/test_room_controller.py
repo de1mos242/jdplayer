@@ -26,12 +26,8 @@ def create_room(self, room_name):
 class TestRoomController(BaseTestCase):
 
     def test_create_room(self):
-        """ Test for login of registered-user login """
         with self.client:
-            # user registration
             self.create_user('t1000', '1000')
-
-            # registered user login
             login_response = login_user(self, 't1000', '1000')
             self.assertEqual(login_response.status_code, 200)
 

@@ -1,3 +1,4 @@
+import flask_login
 from flask import Response
 from flask_restplus import Resource, reqparse
 
@@ -19,9 +20,10 @@ class TracksListApi(Resource):
     @api.doc('Search in vk or list of all cached tracks', security=None)
     @api.marshal_list_with(track_dto, envelope='data')
     @api.expect(search_tracks_query_arguments, validate=True)
+    @flask_login.login_required
     def get(self):
         parse_results = search_tracks_query_arguments.parse_args()
-        if 'q' in parse_results:
+        if 'q' in parse_results and parse_results['q']:
             search_results = vk_audio.search_audio(parse_results['q'])
             return store_search_results(search_results)
         return get_all_cached_tracks()

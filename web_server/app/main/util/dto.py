@@ -52,3 +52,17 @@ class RoomDto:
         'room': fields.Nested(room, description="Room info"),
         'members': fields.List(fields.Nested(member, description='Member info'))
     })
+
+    track = room_ns.model('track', {
+        'id': fields.String(required=True, description='Track id'),
+        'artist': fields.String(required=True, description='Track artist'),
+        'title': fields.String(required=True, description='Track title'),
+        'duration': fields.Integer(required=True, description='Track duration'),
+        'state': fields.String(required=True, enum=TrackState._member_names_, description='State')
+    })
+
+    playlist_item = room_ns.model('playlist_item', {
+        'id': fields.String(required=True, description='Playlist item id'),
+        'position': fields.Integer(required=True, description='Playlist item position'),
+        'track': fields.Nested(track, description='Track info')
+    })

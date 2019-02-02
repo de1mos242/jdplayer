@@ -48,3 +48,7 @@ async def download_track(url: str, target_name):
 
     file_service.upload_file(filepath, target_name)
     os.remove(filepath)
+
+
+def get_track(track_id):
+    return Track.query.get(track_id)

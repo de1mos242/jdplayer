@@ -23,7 +23,7 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI", 'sqlite:///' + os.path.join(basedir, 'flask_jdplayer_main.db'))
     SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS", False)
-    SQLALCHEMY_ECHO = os.getenv("SQLALCHEMY_ECHO", True)
+    SQLALCHEMY_ECHO = os.getenv("SQLALCHEMY_ECHO", False)
 
     DEBUG = os.getenv("DEBUG", True)
 

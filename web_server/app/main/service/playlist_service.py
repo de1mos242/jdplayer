@@ -1,7 +1,9 @@
 from app.main import db
 from app.main.model.playlist import Playlist, PlaylistItem
 from app.main.model.room import Room
-from app.main.model.track import Track
+from app.main.model.track import Track, TrackState
+from app.main.service import track_service
+from app.main import stream_service
 
 
 def add_track_to_room(room: Room, track: Track):
@@ -22,6 +24,12 @@ def add_track_to_room(room: Room, track: Track):
         db.session.add(playlist_item)
         db.session.commit()
 
+    if track.state == TrackState.created:
+        track_service.prepare_track_for_playlist(track, playlist)
+    elif track.state == TrackState.ready:
+        if not stream_service.is_playing(playlist.id):
+            stream_service.play_next(playlist.id)
+
 
 def get_room_playlist_items(room):
     return PlaylistItem.query \
@@ -29,3 +37,12 @@ def get_room_playlist_items(room):
         .filter(Playlist.room == room) \
         .order_by(PlaylistItem.position.asc()) \
         .all()
+
+
+def get_next_ready_track(playlist):
+    return PlaylistItem.query \
+        .join(Track) \
+        .filter(PlaylistItem.playlist == playlist) \
+        .filter(Track.state == TrackState.ready) \
+        .order_by(PlaylistItem.position.asc()) \
+        .first()

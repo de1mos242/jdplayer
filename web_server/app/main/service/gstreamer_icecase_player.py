@@ -1,3 +1,4 @@
+import logging
 import os
 import threading
 import time
@@ -5,12 +6,15 @@ import time
 import gi
 
 gi.require_version('Gst', '1.0')
-from gi.repository import Gst, GObject
+from gi.repository import Gst, GObject, GLib
 
 
 class GstreamMountpoint(object):
 
-    def __init__(self, mount_point):
+    def __init__(self, mount_point, playlist_id: int, on_stop_callback,
+                 ip='localhost', port=8000, password='icejdplayer'):
+        self.playlist_id = playlist_id
+        self.on_stop_callback = on_stop_callback
         self.playmode = False
 
         self.pipeline = Gst.Pipeline.new(f'main-pipe-{mount_point}')
@@ -24,11 +28,11 @@ class GstreamMountpoint(object):
 
         self.tag_inject = Gst.ElementFactory.make('taginject', 'tag_inject')
         self.shoutcast = Gst.ElementFactory.make('shout2send', 'shout_to_send')
-        self.shoutcast.set_property('ip', 'localhost')
-        self.shoutcast.set_property('port', 8000)
-        self.shoutcast.set_property('password', 'icejdplayer')
+        self.shoutcast.set_property('ip', ip)
+        self.shoutcast.set_property('port', port)
+        self.shoutcast.set_property('password', password)
         self.shoutcast.set_property('mount', mount_point)
-        self.shoutcast.set_property('url', f'localhost:8000{mount_point}')
+        self.shoutcast.set_property('url', f'{ip}:{port}{mount_point}')
 
         self.pipeline.add(self.file_src)
         self.pipeline.add(self.audio_parse)
@@ -47,16 +51,19 @@ class GstreamMountpoint(object):
         self.lame.link(self.tag_inject)
         self.tag_inject.link(self.shoutcast)
 
+        self.loop = GLib.MainLoop()
+
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
         bus.connect("message", self.on_message)
+        logging.warning(f'initialized mount point: {mount_point} in {threading.current_thread().name}')
 
     def on_message(self, bus, message):
         t = message.type
         if t == Gst.MessageType.EOS:
-            self.pipeline.set_state(Gst.State.NULL)
+            self.pipeline.set_state(Gst.State.READY)
             print(f'Get end of file, exit in {threading.current_thread().name}')
-            self.playmode = False
+            self.on_stop_callback(self.playlist_id)
         elif t == Gst.MessageType.ERROR:
             self.pipeline.set_state(Gst.State.NULL)
             err, debug = message.parse_error()
@@ -70,10 +77,16 @@ class GstreamMountpoint(object):
             filepath = os.path.realpath(filepath)
             self.playmode = True
             print(f"play {filepath} in {threading.current_thread().name}")
+            logging.warning(f"logger play {filepath} in {threading.current_thread().name}")
             self.file_src.set_property('location', filepath)
             self.pipeline.set_state(Gst.State.PLAYING)
-            while self.playmode:
-                time.sleep(1)
+            try:
+                self.loop.run()
+            except InterruptedError:
+                logging.error(f'Got interrupt in loop:  in {threading.current_thread().name}')
+            except:
+                logging.error(f'exception in loop: {str(sys.exc_info()[0])} in {threading.current_thread().name}')
+                raise
             print(f"stop playing {filepath} in {threading.current_thread().name}")
 
     def stop(self):
@@ -110,7 +123,6 @@ def run():
     input('anykey to exit...')
     for p in players:
         p.set_song('/home/denis/Загрузки/test_upload_file.mp3')
-
 
     input('anykey to exit...')
     for p in players:

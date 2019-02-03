@@ -29,6 +29,7 @@ class Track(db.Model):
     state = db.Column(db.Enum(TrackState), server_default=TrackState.created.value)
     error_data = db.Column(db.Text)
     external_id = db.Column(db.String(200), unique=True, nullable=False)
+    binary_name = db.Column(db.Text)
 
     created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime, nullable=False, server_default=func.now(), onupdate=func.now())

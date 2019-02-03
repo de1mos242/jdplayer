@@ -24,9 +24,8 @@ def get_rooms(user: User) -> List[Room]:
     return Room.query.filter(Room.id.in_(member_query_filter)).all()
 
 
-def get_room_full_info(room_id, user):
-    db_info = db.session.query(Room, RoomMember).join(RoomMember.room).filter(Room.id == room_id).filter(
-        RoomMember.user == user).all()
+def get_room_full_info(room_id):
+    db_info = db.session.query(Room, RoomMember).join(RoomMember.room).filter(Room.id == room_id).all()
     return {'room': db_info[0][0],
             'members': [info[1] for info in db_info]}
 

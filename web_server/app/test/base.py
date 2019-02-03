@@ -31,8 +31,11 @@ class BaseTestCase(TestCase):
         db.session.flush()
 
     @staticmethod
-    def create_track(artist, title, duration, external_id):
-        track = Track(artist=artist, title=title, duration=duration, external_id=external_id)
+    def create_track(artist, title, duration, external_id, url=None):
+        track = Track(artist=artist, title=title,
+                      duration=duration, external_id=external_id,
+                      url=url)
         db.session.add(track)
         db.session.commit()
         db.session.flush()
+        return track

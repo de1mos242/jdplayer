@@ -33,5 +33,8 @@ file_service.init_app(url=app.config['S3_URL'],
                       region=app.config['S3_REGION'],
                       bucket_name=app.config['S3_BUCKET_NAME'])
 
-from app.main.service import background_task_service, user_service
+from app.main.service.stream_service import StreamService
 
+stream_service = StreamService()
+
+from app.main.service import background_task_service, user_service

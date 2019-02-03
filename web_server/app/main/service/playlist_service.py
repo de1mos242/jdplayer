@@ -1,3 +1,7 @@
+import random
+
+from sqlalchemy import func
+
 from app.main import db
 from app.main.model.playlist import Playlist, PlaylistItem
 from app.main.model.room import Room
@@ -39,10 +43,21 @@ def get_room_playlist_items(room):
         .all()
 
 
-def get_next_ready_track(playlist):
-    return PlaylistItem.query \
+def pop_next_ready_track(playlist):
+    playlist_item = PlaylistItem.query \
         .join(Track) \
         .filter(PlaylistItem.playlist == playlist) \
         .filter(Track.state == TrackState.ready) \
         .order_by(PlaylistItem.position.asc()) \
         .first()
+
+    if not playlist_item:
+        tracks_size = Track.query.filter(Track.state == TrackState.ready).with_only_columns([func.count()]).scalar()
+        track_index = random.randint(0, tracks_size)
+        track = Track.filter(Track.state == TrackState.ready).offset(track_index).first()
+    else:
+        track = playlist_item.track
+        db.session.delete(playlist_item)
+        db.session.commit()
+
+    return track

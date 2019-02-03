@@ -38,7 +38,7 @@ def store_search_results(results: List[AudioSearchResult]) -> List[Track]:
     return list(map(lambda item: db_tracks_map[item.external_id], results))
 
 
-async def download_track(track: Track, playlist_id):
+async def download_track(track: Track):
     try:
         update_state(track, TrackState.downloading)
         target_name = f'{track.id} - {track.artist}: {track.title}'[:30] + f' - {uuid.uuid4()}'
@@ -54,8 +54,6 @@ async def download_track(track: Track, playlist_id):
         os.remove(filepath)
         track.binary_name = target_name
         update_state(track, TrackState.ready)
-        if not stream_service.is_playing(playlist_id):
-            stream_service.play_next(playlist_id)
     except SQLAlchemyError as err:
         db.session.rollback()
         track.error_data = str(err)

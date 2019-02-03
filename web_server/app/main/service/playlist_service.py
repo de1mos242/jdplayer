@@ -6,12 +6,11 @@ from app.main import db
 from app.main.model.playlist import Playlist, PlaylistItem
 from app.main.model.room import Room
 from app.main.model.track import Track, TrackState
-from app.main.service import track_service
-from app.main import stream_service
+from app.main.service import track_service, background_task_service
 
 
 def add_track_to_room(room: Room, track: Track):
-    playlist = Playlist.query.filter(Playlist.room == room).first()
+    playlist = get_playlist_for_room(room)
 
     playlist_item = PlaylistItem.query \
         .filter(PlaylistItem.playlist == playlist) \
@@ -31,8 +30,7 @@ def add_track_to_room(room: Room, track: Track):
     if track.state == TrackState.created:
         track_service.prepare_track_for_playlist(track, playlist)
     elif track.state == TrackState.ready:
-        if not stream_service.is_playing(playlist.id):
-            stream_service.play_next(playlist.id)
+        background_task_service.start_playing_in_room.delay(playlist.id)
 
 
 def get_room_playlist_items(room):
@@ -61,3 +59,12 @@ def pop_next_ready_track(playlist):
         db.session.commit()
 
     return track
+
+
+def skip_current_track(room, current_user):
+    playlist = get_playlist_for_room(room)
+    background_task_service.skip_track(playlist.id, current_user.id)
+
+
+def get_playlist_for_room(room):
+    return Playlist.query.filter(Playlist.room == room).first()

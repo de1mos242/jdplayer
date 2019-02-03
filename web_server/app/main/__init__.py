@@ -35,6 +35,6 @@ file_service.init_app(url=app.config['S3_URL'],
 
 from app.main.service.stream_service import StreamService
 
-stream_service = StreamService()
+stream_service = StreamService(max_skip_count=1)
 
 from app.main.service import background_task_service, user_service

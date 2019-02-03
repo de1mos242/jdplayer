@@ -80,3 +80,19 @@ class RoomOrderTrackApi(Resource):
 
         playlist_service.add_track_to_room(room, track)
         return 'added', 200
+
+
+@api.route('/<room_id>/track/')
+@api.param('room_id', 'room id', _in='path', required=True)
+class RoomTracksApi(Resource):
+
+    @api.doc("Skip current track in room")
+    @flask_login.login_required
+    def delete(self, room_id):
+        current_user = flask_login.current_user
+        room = room_service.get_room(room_id, current_user)
+        if not room:
+            return 'Room not found', 404
+
+        playlist_service.skip_current_track(room, current_user)
+        return "skip added"
